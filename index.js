@@ -7,6 +7,7 @@ const btnCloseRef = document.querySelector(
 );
 const divModalEl = document.querySelector(".lightbox__content");
 const overlayRef = document.querySelector(".lightbox__overlay");
+const divCloseModal = document.querySelector(".lightbox__image");
 
 const imagesCardMurkup = galleryItems.reduce(
   (acc, { preview, description, original }) => {
@@ -25,20 +26,17 @@ galleryRef.innerHTML = imagesCardMurkup;
 
 const imgEl = document.querySelector(".gallery__image");
 
-galleryRef.addEventListener("click", e);
+galleryRef.addEventListener("click", previewClick);
 
 let element;
-function e(eve) {
+function previewClick(eve) {
   eve.preventDefault();
-  if (eve.target.className !== imgEl.className) {
+
+  if (eve.target.nodeName !== "IMG") {
     return;
   }
-  const bigImgEl = eve.target.alt;
-  for (let i = 0; i < galleryItems.length; i++) {
-    if (galleryItems[i].description === bigImgEl) {
-      element = galleryItems[i].original;
-    }
-  }
+
+  const bigImgEl = eve.target;
 
   modalRef.classList.add("is-open");
   divModalEl.innerHTML = `<img class="lightbox__image"
@@ -53,16 +51,15 @@ btnCloseRef.addEventListener("click", () => {
 
 // Очистка пути после закрытия модалки//
 
-function isOpen() {
-  const divCloseModal = document.querySelector(".lightbox__image");
+function isClose() {
   modalRef.classList.remove("is-open");
   divCloseModal.alt = "";
   divCloseModal.src = "";
 }
 const closeModalEl = document.querySelector('[data-action="close-lightbox"]');
-closeModalEl.addEventListener("click", isOpen);
+closeModalEl.addEventListener("click", isClose);
 
-overlayRef.addEventListener("click", isOpen);
+overlayRef.addEventListener("click", isClose);
 
 // Управление кнопками //
 
@@ -71,7 +68,7 @@ document.addEventListener("keydown", (eve) => {
 
   // Кнопка Esc //
   if (eve.code === "Escape") {
-    isOpen();
+    isClose();
   }
   if (modalRef.className.includes("is-open")) {
     const mapDefEl = galleryItems.map((value) => value.original);
@@ -90,7 +87,7 @@ document.addEventListener("keydown", (eve) => {
       }
     }
     // Кнопка вправо //
-    if (eve.code === "ArrowRight" || eve.code === "Space") {
+    if (eve.code === "ArrowRight") {
       if (eve.target.className === imgEl.className) {
         return;
       }
